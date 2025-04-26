@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Judul bisa statis atau dinamis, kita buat dinamis di Python saja -->
+    <title>Portfolio Contact</title>
+    <style>
+        /* ... (Seluruh blok <style> Anda tetap sama persis) ... */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        .email-header {
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .email-header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 600;
+        }
+        .email-content {
+            padding: 30px;
+        }
+        .field-row {
+            margin-bottom: 20px;
+            display: flex;
+            border-bottom: 1px solid #f0f0f0;
+            padding-bottom: 12px;
+            align-items: baseline; /* Agar label dan value sejajar */
+        }
+        .field-label {
+            font-weight: 600;
+            width: 25%; /* Sedikit lebih kecil agar value lebih luas */
+            min-width: 70px; /* Lebar minimum */
+            color: #555;
+            padding-right: 10px; /* Jarak antara label dan value */
+        }
+        .field-value {
+            width: 75%;
+            color: #333;
+            word-wrap: break-word; /* Agar teks panjang tidak keluar */
+        }
+        .message-box {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            border-left: 4px solid #6e8efb;
+        }
+        .message-label {
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #555;
+            display: block; /* Agar full width */
+        }
+        .message-text { /* Tambahkan class untuk teks pesan */
+            line-height: 1.7;
+            color: #333;
+            word-wrap: break-word;
+        }
+        .email-footer {
+            background-color: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            color: #888;
+            font-size: 14px;
+            border-top: 1px solid #eee;
+        }
+        .action-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            color: white !important; /* Paksa warna putih */
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 6px;
+            margin-top: 20px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none; /* Hapus border default link */
+            cursor: pointer;
+        }
+        .action-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            color: white !important; /* Pastikan tetap putih saat hover */
+        }
+        a { /* Gaya default link jika ada di dalam pesan */
+            color: #6e8efb;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="email-header">
+            <h1>New Portfolio Contact</h1>
+        </div>
+
+        <div class="email-content">
+            <div class="field-row">
+                <div class="field-label">From:</div>
+                <!-- Ubah placeholder -->
+                <div class="field-value">{{ name }}</div>
+            </div>
+
+            <div class="field-row">
+                <div class="field-label">Email:</div>
+                <!-- Ubah placeholder -->
+                <div class="field-value">{{ email }}</div>
+            </div>
+
+            <div class="field-row">
+                <div class="field-label">Subject:</div>
+                <!-- Ubah placeholder -->
+                <div class="field-value">{{ subject }}</div>
+            </div>
+
+            <div class="message-box">
+                <div class="message-label">Message:</div>
+                <!-- Ubah placeholder -->
+                <div class="message-text">{{ message }}</div>
+            </div>
+
+            <div style="text-align: center; margin-top: 30px;">
+                <!-- Ubah placeholder -->
+                <a href="{{ reply_link }}" class="action-button">Balas Pesan</a>
+            </div>
+        </div>
+
+        <div class="email-footer">
+            Sent via your portfolio contact form.
+        </div>
+    </div>
+</body>
+</html>

@@ -15,10 +15,10 @@ document.addEventListener('DOMContentLoaded', function() {
     function type() {
         const typingText = document.getElementById('typing-text');
         const phrases = [
-            'Frontend Developer',
-            'UI/UX Designer',
-            'Web Developer',
-            'React Developer',
+            'AI & ML Engineer',
+            'Python Developer',
+            'Backend Developer',
+            'Data Scientist',
             'Freelancer'
         ];
         let phraseIndex = 0;
@@ -192,43 +192,84 @@ document.addEventListener('DOMContentLoaded', function() {
     const contactForm = document.getElementById('contactForm');
     if (contactForm) {
         contactForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
+            e.preventDefault(); // Tetap cegah submit default
+
             // Get form values
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const subject = document.getElementById('subject').value;
-            const message = document.getElementById('message').value;
-            
-            // Basic validation
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const subject = document.getElementById('subject').value.trim();
+            const message = document.getElementById('message').value.trim();
+
+            // Basic validation (tetap pertahankan)
             if (!name || !email || !subject || !message) {
                 showFormAlert('Please fill in all fields', 'error');
                 return;
             }
-            
-            // Email validation
+
+            // Email validation (tetap pertahankan)
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(email)) {
                 showFormAlert('Please enter a valid email address', 'error');
                 return;
             }
-            
-            // Simulate form submission (in a real app, you would send data to a server)
+
+            // --- GANTI BAGIAN SIMULASI DENGAN KODE FETCH ---
             const submitBtn = contactForm.querySelector('button[type="submit"]');
             const originalBtnText = submitBtn.textContent;
-            
+
             submitBtn.disabled = true;
             submitBtn.textContent = 'Sending...';
-            
-            setTimeout(function() {
-                // Reset form
-                contactForm.reset();
+
+            // Data yang akan dikirim ke backend
+            const formData = {
+                name: name,
+                email: email,
+                subject: subject,
+                message: message
+            };
+
+            // Kirim data ke endpoint Flask Anda
+            fetch('/api/send-message', { // Pastikan endpoint ini cocok dengan route Flask Anda
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData), // Kirim data sebagai JSON
+            })
+            .then(response => {
+                // Cek apakah response dari server OK (status code 2xx)
+                if (!response.ok) {
+                    // Jika tidak OK, coba baca pesan error dari server jika ada
+                    return response.json().then(errData => {
+                        throw new Error(errData.message || `Server error: ${response.status}`);
+                    }).catch(() => {
+                        // Jika tidak ada pesan JSON, lempar error umum
+                        throw new Error(`Server error: ${response.status}`);
+                    });
+                }
+                return response.json(); // Jika OK, parse response JSON
+            })
+            .then(data => {
+                // Server mengembalikan sukses
+                if (data.success) {
+                    showFormAlert('Your message has been sent successfully!', 'success');
+                    contactForm.reset(); // Reset form jika berhasil
+                } else {
+                    // Server mengembalikan pesan error spesifik
+                    showFormAlert(data.message || 'An error occurred. Please try again.', 'error');
+                }
+            })
+            .catch(error => {
+                // Tangani error network atau error lainnya
+                console.error('Error sending message:', error);
+                showFormAlert(`Failed to send message: ${error.message}`, 'error');
+            })
+            .finally(() => {
+                // Selalu kembalikan tombol ke state semula, baik sukses maupun gagal
                 submitBtn.disabled = false;
                 submitBtn.textContent = originalBtnText;
-                
-                // Show success message
-                showFormAlert('Your message has been sent successfully!', 'success');
-            }, 2000);
+            });
+            // --- AKHIR BAGIAN SIMULASI ---
         });
     }
     
