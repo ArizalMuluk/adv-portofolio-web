@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iris Flower Species Prediction</title>
+    <link rel="icon" type="image/png" href="{{ url_for('iris_prediction.static', filename='flower.png') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* CSS styles with modifications for landscape layout */
+        :root {
+            --primary: #4e54c8;
+            --primary-hover: #3f44a9;
+            --secondary: #8f94fb;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --success: #4CAF50;
+            --border-radius: 12px;
+            --box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px; /* Increased for landscape layout */
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+            margin: 20px auto;
+            animation: fadeIn 0.8s ease;
+            display: flex; /* Use flexbox for landscape layout */
+            flex-direction: row; /* Horizontal layout */
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            width: 30%; /* Fixed width for header section */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .header h1 {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 2;
+        }
+
+        .header p {
+            font-size: 1em;
+            opacity: 0.9;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath opacity='.5' d='M96 95h4v1h-4v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9zm-1 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.3;
+            z-index: 1;
+        }
+
+        .flower-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            animation: pulse 2s infinite;
+        }
+
+        .content {
+            padding: 30px;
+            width: 70%; /* Take remaining width */
+            overflow-y: auto;
+        }
+
+        .info-card {
+            background-color: rgba(78, 84, 200, 0.1);
+            border-left: 4px solid var(--primary);
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 6px;
+        }
+
+        .info-card p {
+            margin: 0;
+        }
+
+        form {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* Always 2 columns for landscape */
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 5px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 15px 12px 40px;
+            border: 2px solid #e0e0e0;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .input-group input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(78, 84, 200, 0.2);
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #aaa;
+            transition: var(--transition);
+        }
+
+        .input-group input:focus + i {
+            color: var(--primary);
+        }
+
+        .btn-container {
+            grid-column: 1 / -1;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 10px rgba(78, 84, 200, 0.3);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 60%);
+            transition: all 0.6s ease;
+            z-index: -1;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(78, 84, 200, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 8px rgba(78, 84, 200, 0.2);
+        }
+
+        .prediction-result {
+            margin-top: 30px;
+            text-align: center;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            animation: slideUp 0.5s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .prediction-title {
+            font-size: 1.2em;
+            color: var(--dark);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .prediction-value {
+            font-size: 1.5em;
+            padding: 10px 25px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 50px;
+            font-weight: 700;
+            display: inline-block;
+            box-shadow: 0 4px 10px rgba(78, 84, 200, 0.3);
+        }
+
+        .iris-info {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .iris-card {
+            flex: 1;
+            min-width: 220px;
+            background-color: white;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .iris-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .iris-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .setosa .iris-icon {
+            color: #FF5722;
+        }
+
+        .versicolor .iris-icon {
+            color: #9C27B0;
+        }
+
+        .virginica .iris-icon {
+            color: #2196F3;
+        }
+
+        .iris-name {
+            font-weight: 700;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+        }
+
+        .iris-description {
+            font-size: 0.85em;
+            color: #666;
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        /* Media queries for responsive layout */
+        @media (max-width: 992px) {
+            .container {
+                flex-direction: column; /* Stack vertically on smaller screens */
+            }
+            
+            .header {
+                width: 100%;
+                padding: 20px;
+            }
+            
+            .content {
+                width: 100%;
+            }
+            
+            form {
+                grid-template-columns: repeat(2, 1fr); /* Keep 2 columns for medium screens */
+            }
+        }
+
+        @media (max-width: 768px) {
+            form {
+                grid-template-columns: repeat(1, 1fr); /* Single column for small screens */
+            }
+        }
+
+        /* Forced landscape orientation */
+        @media screen and (orientation: portrait) {
+            body {
+                height: 100vh;
+                padding: 10px;
+            }
+            
+            .container {
+                flex-direction: row; /* Force landscape even in portrait mode */
+                max-height: 90vh;
+            }
+            
+            .header {
+                width: 30%;
+            }
+            
+            .content {
+                width: 70%;
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .error {
+            padding: 15px;
+            border-radius: var(--border-radius);
+            background-color: #ffebee;
+            border-left: 4px solid #f44336;
+            color: #d32f2f;
+            margin-bottom: 20px;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% {transform: translateX(0);}
+            10%, 30%, 50%, 70%, 90% {transform: translateX(-5px);}
+            20%, 40%, 60%, 80% {transform: translateX(5px);}
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <i class="fas fa-spa flower-icon"></i>
+            <h1>Iris Flower Species Prediction</h1>
+            <p>Enter the flower measurement parameters to predict the Iris species</p>
+        </div>
+
+        <div class="content">
+            <div class="info-card">
+                <p>Please enter the petal and sepal measurements of the iris flower in centimeters (cm). The model will predict the iris species based on the measurements you provide.</p>
+            </div>
+
+            <form method="POST">
+                <div class="form-group">
+                    <label for="sepal_length">Sepal Length (cm)</label>
+                    <div class="input-group">
+                        <input type="number" step="0.1" min="0" name="sepal_length" id="sepal_length" placeholder="Example: 5.1" required>
+                        <i class="fas fa-ruler-horizontal"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="sepal_width">Sepal Width (cm)</label>
+                    <div class="input-group">
+                        <input type="number" step="0.1" min="0" name="sepal_width" id="sepal_width" placeholder="Example: 3.5" required>
+                        <i class="fas fa-ruler-vertical"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="petal_length">Petal Length (cm)</label>
+                    <div class="input-group">
+                        <input type="number" step="0.1" min="0" name="petal_length" id="petal_length" placeholder="Example: 1.4" required>
+                        <i class="fas fa-ruler-horizontal"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="petal_width">Petal Width (cm)</label>
+                    <div class="input-group">
+                        <input type="number" step="0.1" min="0" name="petal_width" id="petal_width" placeholder="Example: 0.2" required>
+                        <i class="fas fa-ruler-vertical"></i>
+                    </div>
+                </div>
+
+                <div class="btn-container">
+                    <button type="submit" class="btn">
+                        <i class="fas fa-search"></i> Predict Now
+                    </button>
+                </div>
+            </form>
+
+            {% if prediction %}
+            <div class="prediction-result">
+                <div class="prediction-title">Prediction Result</div>
+                <div class="prediction-value">{{ prediction }}</div>
+            </div>
+            {% endif %}
+
+            <div class="iris-info">
+                <div class="iris-card setosa">
+                    <div class="iris-icon">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <div class="iris-name">Iris Setosa</div>
+                    <div class="iris-description">
+                        Flower with short petals and wide sepals. Native habitat in moist areas of North America and Eurasia.
+                    </div>
+                </div>
+
+                <div class="iris-card versicolor">
+                    <div class="iris-icon">
+                        <i class="fas fa-fan"></i>
+                    </div>
+                    <div class="iris-name">Iris Versicolor</div>
+                    <div class="iris-description">
+                        Also called Blue Flag, grows in moist meadows and near water bodies.
+                    </div>
+                </div>
+
+                <div class="iris-card virginica">
+                    <div class="iris-icon">
+                        <i class="fas fa-asterisk"></i>
+                    </div>
+                    <div class="iris-name">Iris Virginica</div>
+                    <div class="iris-description">
+                        Species with the largest petal size, commonly found in swamps and wet areas.
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer">
+                <p>&copy; <span id="copyright-year"></span> Iris Flower Prediction System | Developed with ❤️ by : Arzlfrds</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Set landscape mode by default
+        if (window.innerHeight > window.innerWidth) {
+            document.body.style.height = "100vh";
+            document.body.style.width = "100vw";
+        }
+
+        // Animasi sederhana pada form input
+        const inputs = document.querySelectorAll('input');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'scale(1.02)';
+            });
+
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'scale(1)';
+            });
+        });
+
+        // Validasi form sederhana
+        const form = document.querySelector('form');
+        form.addEventListener('submit', function(e) {
+            let valid = true;
+
+            inputs.forEach(input => {
+                if (input.value.trim() === '' || isNaN(input.value) || parseFloat(input.value) < 0) {
+                    valid = false;
+                    input.style.borderColor = '#f44336';
+                    setTimeout(() => {
+                        input.style.borderColor = '#e0e0e0';
+                    }, 3000);
+                }
+            });
+
+            if (!valid) {
+                e.preventDefault();
+
+                // Hapus pesan error sebelumnya jika ada
+                const existingError = document.querySelector('.error');
+                if (existingError) existingError.remove();
+
+                // Tambahkan pesan error baru
+                const errorMsg = document.createElement('div');
+                errorMsg.className = 'error';
+                errorMsg.innerHTML = '<i class="fas fa-exclamation-circle"></i> Please fill in all measurements with valid numbers (value must be greater than 0).';
+
+                form.insertBefore(errorMsg, form.firstChild);
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Fungsi ini akan berjalan setelah seluruh halaman HTML dimuat
+        
+            // Dapatkan elemen span berdasarkan ID yang tadi dibuat
+            const yearSpan = document.getElementById('copyright-year');
+        
+            // Periksa apakah elemen tersebut ditemukan
+            if (yearSpan) {
+                // Dapatkan tahun saat ini
+                const currentYear = new Date().getFullYear();
+                // Set teks di dalam span menjadi tahun saat ini
+                yearSpan.textContent = currentYear;
+            }
+            
+            // Force landscape layout on page load and resize
+            function setLandscapeLayout() {
+                const container = document.querySelector('.container');
+                if (window.innerWidth < window.innerHeight) {
+                    // Force landscape styling
+                    container.style.flexDirection = 'row';
+                    document.querySelector('.header').style.width = '30%';
+                    document.querySelector('.content').style.width = '70%';
+                }
+            }
+            
+            // Run initially
+            setLandscapeLayout();
+            
+            // Run on window resize
+            window.addEventListener('resize', setLandscapeLayout);
+        });
+    </script>
+</body>
+</html>

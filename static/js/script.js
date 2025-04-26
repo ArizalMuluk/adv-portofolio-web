@@ -1,14 +1,78 @@
 // Wait for DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', function() {
+    // Variabel untuk melacak status loading
+    let pageLoaded = false;
+    let loaderHidden = false;
+    
+    // Fungsi untuk memulai animasi home
+    function startHomeAnimations() {
+        // Hanya jalankan jika kedua kondisi terpenuhi
+        if (pageLoaded && loaderHidden) {
+            // Animasi elemen hero
+            const heroElements = [
+                document.querySelector('.hero h1'),
+                document.querySelector('.typing-container'),
+                document.querySelector('.hero-description'),
+                document.querySelector('.cta-buttons'),
+                document.querySelector('.social-icons'),
+                document.querySelector('.scroll-down')
+            ];
+            
+            // Reset animasi dengan menghapus animasi yang ada dan mengatur opacity ke 0
+            heroElements.forEach(el => {
+                if (el) {
+                    el.style.animation = 'none';
+                    el.offsetHeight; // Trigger reflow
+                    el.style.opacity = '0';
+                    el.style.transform = 'translateY(30px)';
+                }
+            });
+            
+            // Mulai animasi segera (tanpa delay tambahan)
+            if (heroElements[0]) heroElements[0].style.animation = 'fadeInUp 1s forwards';
+            setTimeout(() => {
+                if (heroElements[1]) heroElements[1].style.animation = 'fadeInUp 1s forwards';
+            }, 200);
+            setTimeout(() => {
+                if (heroElements[2]) heroElements[2].style.animation = 'fadeInUp 1s forwards';
+            }, 400);
+            setTimeout(() => {
+                if (heroElements[3]) heroElements[3].style.animation = 'fadeInUp 1s forwards';
+            }, 600);
+            setTimeout(() => {
+                if (heroElements[4]) heroElements[4].style.animation = 'fadeInUp 1s forwards';
+            }, 800);
+            setTimeout(() => {
+                if (heroElements[5]) {
+                    heroElements[5].style.opacity = '1';
+                    heroElements[5].style.animation = 'bounce 2s infinite';
+                }
+            }, 1000);
+            
+            // Mulai animasi typing setelah semua animasi hero selesai
+            setTimeout(type, 1200);
+        }
+    }
+
     // Hide loader when page is loaded
     window.addEventListener('load', function() {
+        pageLoaded = true;
         const loader = document.querySelector('.loader-container');
+        
+        // Kurangi delay penghilangan loader
         setTimeout(function() {
             loader.style.opacity = '0';
+            loader.style.transition = 'opacity 0.5s ease';
+            
+            // Kurangi delay sebelum menghilangkan loader
             setTimeout(function() {
                 loader.style.display = 'none';
-            }, 500);
-        }, 1500);
+                loaderHidden = true;
+                
+                // Segera panggil fungsi untuk memulai animasi home
+                startHomeAnimations();
+            }, 300); // Kurangi delay dari 500ms menjadi 300ms
+        }, 800); // Kurangi delay dari 1500ms menjadi 800ms
     });
 
     // Typing Animation
@@ -60,8 +124,30 @@ document.addEventListener('DOMContentLoaded', function() {
         typeWriter();
     }
 
-    // Start typing animation
-    type();
+    // Tambahkan CSS untuk memastikan animasi home tidak terlihat sebelum loader hilang
+    const hideAnimationsStyle = document.createElement('style');
+    hideAnimationsStyle.textContent = `
+        .hero h1, .typing-container, .hero-description, .cta-buttons, .social-icons, .scroll-down {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: none !important;
+        }
+    `;
+    document.head.appendChild(hideAnimationsStyle);
+
+    // Hapus style tersebut saat loader hilang
+    function removeHideAnimationsStyle() {
+        if (hideAnimationsStyle && hideAnimationsStyle.parentNode) {
+            hideAnimationsStyle.parentNode.removeChild(hideAnimationsStyle);
+        }
+    }
+
+    // Modifikasi fungsi startHomeAnimations untuk menghapus style
+    const originalStartHomeAnimations = startHomeAnimations;
+    startHomeAnimations = function() {
+        removeHideAnimationsStyle();
+        originalStartHomeAnimations();
+    };
 
     // Header scroll effect
     const header = document.querySelector('header');
@@ -385,112 +471,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Theme toggle functionality (optional)
-    const createThemeToggle = function() {
-        // Create toggle button
-        const themeToggle = document.createElement('button');
-        themeToggle.className = 'theme-toggle';
-        themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
-        document.body.appendChild(themeToggle);
-        
-        // Add styles
-        const themeStyles = document.createElement('style');
-        themeStyles.textContent = `
-            .theme-toggle {
-                position: fixed;
-                bottom: 30px;
-                left: 30px;
-                width: 50px;
-                height: 50px;
-                background: var(--gradient-primary);
-                color: white;
-                border-radius: var(--radius-full);
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                font-size: var(--text-xl);
-                box-shadow: var(--shadow-md);
-                cursor: pointer;
-                z-index: 99;
-                transition: var(--transition-fast);
-            }
-            
-            .theme-toggle:hover {
-                transform: translateY(-5px);
-                box-shadow: var(--shadow-lg);
-            }
-            
-            body.light-theme {
-                --bg-color: #f8f9fa;
-                --bg-light: #ffffff;
-                --text-color: #333333;
-                --text-light: #555555;
-                --text-dark: #888888;
-            }
-            
-            body.light-theme .skill-item,
-            body.light-theme .contact-form {
-                background: #ffffff;
-                box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
-            }
-        `;
-        document.head.appendChild(themeStyles);
-        
-        // Toggle theme on click
-        themeToggle.addEventListener('click', function() {
-            document.body.classList.toggle('light-theme');
-            
-            if (document.body.classList.contains('light-theme')) {
-                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-            } else {
-                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
-            }
-        });
-    };
-    
-    // Uncomment to enable theme toggle
-    // createThemeToggle();
-
-    // Preload images for better performance
-    function preloadImages() {
-        const images = document.querySelectorAll('img');
-        images.forEach(img => {
-            const src = img.getAttribute('src');
-            if (src) {
-                const newImg = new Image();
-                newImg.src = src;
-            }
-        });
-    }
-    
-    // Call preload function
-    preloadImages();
-
-    // Add a simple page transition effect
-    function addPageTransitions() {
-        const style = document.createElement('style');
-        style.textContent = `
-            body {
-                animation: fadeIn 1s ease-in-out;
-            }
-            
-            @keyframes fadeIn {
-                from {
-                    opacity: 0;
-                }
-                to {
-                    opacity: 1;
-                }
-            }
-        `;
-        document.head.appendChild(style);
-    }
-    
-    // Call page transitions
-    addPageTransitions();
-
-    // Tambahkan fungsi ini di bagian akhir file script.js, sebelum kurung tutup terakhir
-
     // Create animated background
     function createAnimatedBackground() {
         // Get background container
@@ -524,78 +504,43 @@ document.addEventListener('DOMContentLoaded', function() {
         const stars3 = document.createElement('div');
         stars3.id = 'stars3';
         bgContainer.appendChild(stars3);
-        
-        // Add particles container
-        const particles = document.createElement('div');
-        particles.className = 'particles';
-        bgContainer.appendChild(particles);
-        
-        // Create particles
-        const particleCount = window.innerWidth < 768 ? 30 : 50;
-        
-        for (let i = 0; i < particleCount; i++) {
-            createParticle(particles);
+
+        // --- TAMBAHKAN KODE INI UNTUK MEMBUAT PARTIKEL ---
+        const numberOfParticles = 100; // Jumlah partikel
+        for (let i = 0; i < numberOfParticles; i++) {
+            const particle = document.createElement('div');
+            // PASTIKAN NAMA CLASS BENAR (singular)
+            particle.className = 'particle'; // <-- HARUS 'particle' (singular)
+
+            // 1. Atur Ukuran Acak (tetap sama)
+            const size = Math.random() * 4 + 1.5; // Ukuran antara 1.5px dan 5.5px
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+
+            // 2. Atur Posisi Acak (tetap sama)
+            particle.style.left = `${Math.random() * 100}%`;
+            particle.style.top = `${Math.random() * 100}%`;
+
+            // 3. Buat Warna Acak (tetap sama)
+            const hue = Math.random() * 360;
+            const saturation = 70 + Math.random() * 30;
+            const lightness = 50 + Math.random() * 20;
+            const randomColor = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+
+            // 4. Set Warna sebagai CSS Variable (tetap sama)
+            particle.style.setProperty('--particle-color', randomColor);
+
+            // 5. Atur Delay dan Durasi HANYA untuk animasi 'float'
+            // Delay untuk memulai animasi float
+            particle.style.animationDelay = `${Math.random() * 10}s`; // Hanya SATU nilai delay
+            // Durasi untuk satu siklus animasi float
+            particle.style.animationDuration = `${Math.random() * 10 + 15}s`; // Hanya SATU nilai durasi (15-25s)
+
+            bgContainer.appendChild(particle);
         }
-        
-        // Add mouse interaction
-        document.addEventListener('mousemove', function(e) {
-            const mouseX = e.clientX / window.innerWidth;
-            const mouseY = e.clientY / window.innerHeight;
-            
-            // Move orbs slightly based on mouse position
-            document.querySelectorAll('.orb').forEach(orb => {
-                const offsetX = (mouseX - 0.5) * 20;
-                const offsetY = (mouseY - 0.5) * 20;
-                orb.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
-            });
-        });
-    }
-
-    // Function to create a single particle
-    function createParticle(container) {
-        const particle = document.createElement('div');
-        particle.className = 'particle';
-        
-        // Random properties
-        const size = Math.random() * 5 + 2;
-        const posX = Math.random() * 100;
-        const posY = Math.random() * 100;
-        const delay = Math.random() * 10;
-        const duration = Math.random() * 10 + 10;
-        const color = getRandomColor();
-        
-        // Apply styles
-        particle.style.width = `${size}px`;
-        particle.style.height = `${size}px`;
-        particle.style.left = `${posX}%`;
-        particle.style.top = `${posY}%`;
-        particle.style.backgroundColor = color;
-        particle.style.animationDuration = `${duration}s`;
-        particle.style.animationDelay = `${delay}s`;
-        
-        container.appendChild(particle);
-    }
-
-    // Function to generate random color from theme colors
-    function getRandomColor() {
-        const colors = [
-            'var(--primary-color)',
-            'var(--secondary-color)',
-            'var(--accent-color)',
-            '#4158d0',
-            '#c850c0',
-            '#0093E9',
-            '#80D0C7'
-        ];
-        
-        return colors[Math.floor(Math.random() * colors.length)];
+        // --- AKHIR KODE TAMBAHAN PARTIKEL ---
     }
 
     // Call the function to create the animated background
     createAnimatedBackground();
-
-    // Recreate background on window resize
-    window.addEventListener('resize', function() {
-        createAnimatedBackground();
-    });
 });

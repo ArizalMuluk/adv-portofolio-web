@@ -1,0 +1,10 @@
+@keyframes fireflyPulse {
+    0%, 100% {
+        opacity: 0.3; /* Lebih redup di awal/akhir */
+        transform: scale(0.9); /* Sedikit mengecil */
+    }
+    50% {
+        opacity: 0.8; /* Lebih terang di tengah */
+        transform: scale(1.1); /* Sedikit membesar */
+    }
+}
