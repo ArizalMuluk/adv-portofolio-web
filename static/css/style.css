@@ -211,33 +211,33 @@ section {
 }
 
 /* Particles background */
-.particles {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-}
-
 .particle {
     position: absolute;
     border-radius: 50%;
-    opacity: 0.3;
-    animation: float 15s infinite ease-in-out;
+    background-color: var(--particle-color, white);
+    /* box-shadow: 0 0 8px 3px var(--particle-color, rgba(255, 255, 255, 0.5)); */
+    opacity: 0.5;
+    /* animation: fireflyPulse 3s infinite alternate ease-in-out,  */
+    /* float 20s infinite ease-in-out; */
+    animation: float 20s infinite ease-in-out;
 }
 
 @keyframes float {
     0%, 100% {
-        transform: translateY(0) translateX(0);
+        transform: translateY(0) translateX(0) scale(1);
+        opacity: 0.5; /* Opacity bisa diubah sedikit saat bergerak */
     }
     25% {
-        transform: translateY(-30px) translateX(15px);
+        transform: translateY(-40px) translateX(20px) scale(1.05);
+        opacity: 0.8;
     }
     50% {
-        transform: translateY(-15px) translateX(-15px);
+        transform: translateY(-20px) translateX(-20px) scale(1);
+        opacity: 0.6;
     }
     75% {
-        transform: translateY(30px) translateX(10px);
+        transform: translateY(40px) translateX(15px) scale(0.95);
+        opacity: 0.9;
     }
 }
 
@@ -950,7 +950,16 @@ header .container {
 
 .project-links {
     display: flex;
+    justify-content: center;
+    gap: 15px;;
     gap: 10px;
+}
+
+.project-links .btn.primary-btn {
+    padding: 10px 24px; /* Sedikit lebih besar */
+    width: 100%; /* Tombol mengisi seluruh lebar */
+    max-width: 200px; /* Batasi lebar maksimum */
+    text-align: center;
 }
 
 /* ===== CONTACT SECTION ===== */

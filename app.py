@@ -1,9 +1,11 @@
-from flask import Flask, render_template, url_for, request, redirect, jsonify, render_template_string
+from flask import Flask, render_template, url_for, request, redirect, jsonify, render_template_string, send_from_directory
 import os
 import smtplib
 from email.mime.text import MIMEText
 from dotenv import load_dotenv
 import html
+
+from static.projects.iris_prediction.app import iris_bp
 
 load_dotenv()
 
@@ -16,9 +18,33 @@ SMTP_SERVER = os.getenv('SMTP_SERVER', 'smtp.gmail.com')
 SMTP_PORT = int(os.getenv('SMTP_PORT', 587))
 RECIPIENT_EMAIL = os.getenv('RECIPIENT_EMAIL')
 
+
+# Daftarkan Blueprint dengan URL prefix yang benar
+app.register_blueprint(iris_bp)
+
 @app.route('/')
 def index():
     return render_template('index.html')
+
+# Route untuk mengakses file statis di folder projects
+@app.route('/static/projects/<path:filename>')
+def project_static(filename):
+    return send_from_directory('static/projects', filename)
+
+# Route untuk project portfolio website
+@app.route('/projects/custom-portofolio-website')
+def portfolio_website_demo():
+    return redirect('/static/projects/custom-web-portofolio/index.html')
+
+# @app.route('/projects/iris-prediction')
+# def iris_prediction_demo():
+#     return redirect('/static/projects/iri-prediction/index.html')
+
+# Route untuk download CV
+# @app.route('/download-cv')
+# def download_cv():
+#     return send_from_directory('static/files', 'Arizal_Firdaus_CV.pdf')
+
 
 @app.route('/api/send-message', methods=['POST'])
 def send_message():
