@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Arizal Firdaus - Portfolio</title>
     <link rel="icon" type="image/x-icon" href="/static/images/icons/favicon.ico">
-    <link rel="stylesheet" href="static/css/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <!-- Font Awesome untuk ikon -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
@@ -48,6 +48,22 @@
             </nav>
         </div>
     </header>
+
+    <!-- Flash Message -->
+    <div class="flash-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul class="flash-messages">
+            {% for category, message in messages %}
+            <li class="alert alert-{{ category }}">
+                {{ message }}
+                <span class="close-btn"><i class="fas fa-times"></i></span>
+            </li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+        {% endwith %}
+    </div>
 
     <!-- Home Section -->
     <section id="home" class="hero">
@@ -295,7 +311,7 @@
                 <!-- Project 1 -->
                 <div class="project-item" data-category="web">
                     <div class="project-img">
-                        <img src="/static/projects/custom-web-portofolio/image.png" alt="Project 1">
+                        <img src="{{ url_for('project_static', filename='custom-web-portofolio/image.png') }}" alt="Project 1">
                     </div>
                     <div class="project-info">
                         <h3>Portofolio Website</h3>
@@ -306,7 +322,7 @@
                             <span>JavaScript</span>
                         </div>
                         <div class="project-links">
-                            <a href="/projects/custom-portofolio-website" target="_blank" class="btn primary-btn">Live Demo</a>
+                            <a href="{{ url_for('portfolio_website_demo') }}" target="_blank" class="btn primary-btn">Live Demo</a>
                         </div>
                     </div>
                 </div>
@@ -314,7 +330,7 @@
                 <!-- Project 2 -->
                 <div class="project-item" data-category="ai">
                     <div class="project-img">
-                        <img src="/static/projects/iris_prediction/image.png" alt="Project 2">
+                        <img src="{{ url_for('project_static', filename='iris_prediction/image.png') }}" alt="Project 2">
                     </div>
                     <div class="project-info">
                         <h3>Iris Flower Prediction</h3>
@@ -326,7 +342,7 @@
                             <span>Flask</span>
                         </div>
                         <div class="project-links">
-                            <a href="/projects/iris-prediction" target="_blank" class="btn primary-btn">Live Demo</a>
+                            <a href="{{ url_for('ml_project_unavailable') }}" class="btn primary-btn">Live Demo</a>
                         </div>
                     </div>
                 </div>

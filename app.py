@@ -1,16 +1,18 @@
-from flask import Flask, render_template, url_for, request, redirect, jsonify, render_template_string, send_from_directory
+from flask import Flask, render_template, url_for, request, redirect, jsonify, render_template_string, send_from_directory, flash, session
 import os
 import smtplib
 from email.mime.text import MIMEText
 from dotenv import load_dotenv
 import html
 
-from static.projects.iris_prediction.app import iris_bp
+# from static.projects.iris_prediction.app import iris_bp
 
 load_dotenv()
 
 app = Flask(__name__)
 
+SECRET_KEY = os.getenv('SECRET_KEY')
+app.secret_key = SECRET_KEY
 # --- Konfigurasi Email ---
 EMAIL_ADDRESS = os.getenv('EMAIL_ADDRESS')
 EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
@@ -20,7 +22,7 @@ RECIPIENT_EMAIL = os.getenv('RECIPIENT_EMAIL')
 
 
 # Daftarkan Blueprint dengan URL prefix yang benar
-app.register_blueprint(iris_bp)
+# app.register_blueprint(iris_bp)
 
 @app.route('/')
 def index():
@@ -35,6 +37,13 @@ def project_static(filename):
 @app.route('/projects/custom-portofolio-website')
 def portfolio_website_demo():
     return redirect('/static/projects/custom-web-portofolio/index.html')
+
+@app.route('/notify/ml-project-unavailable')
+def ml_project_unavailable():
+    print("--- Route ml_project_unavailable accessed! ---") # Tambahkan ini
+    flash('The live demo for this AI/ML project is currently unavailable due to resource constraints. Please feel free to contact me for more details or a potential demonstration! :D', 'info') # Changed category to 'info'
+    print("--- Flash message added. Redirecting... ---") # Tambahkan ini
+    return redirect(url_for('index', _anchor='projects'))
 
 # @app.route('/projects/iris-prediction')
 # def iris_prediction_demo():
@@ -146,5 +155,5 @@ def send_message():
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True, port=5000)
 

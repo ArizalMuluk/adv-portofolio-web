@@ -1,0 +1,88 @@
+/* Flash Messages Styling */
+.flash-messages {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+    width: 100%;
+}
+
+.alert {
+    padding: 15px 20px;
+    margin-bottom: 15px;
+    border-radius: var(--radius-md);
+    font-weight: 500;
+    position: relative;
+    animation: slideDown 0.5s ease forwards;
+    box-shadow: var(--shadow-md);
+}
+
+.alert-success {
+    background-color: rgba(46, 213, 115, 0.15);
+    color: #2ed573;
+    border-left: 4px solid #2ed573;
+}
+
+.alert-warning {
+    background-color: rgba(255, 165, 0, 0.15);
+    color: #ffa500;
+    border-left: 4px solid #ffa500;
+}
+
+.alert-error, .alert-danger {
+    background-color: rgba(255, 71, 87, 0.15);
+    color: #ff4757;
+    border-left: 4px solid #ff4757;
+}
+
+.alert-info {
+    background-color: rgba(30, 144, 255, 0.15);
+    color: #1e90ff;
+    border-left: 4px solid #1e90ff;
+}
+
+/* Fixed Flash Message Container */
+.flash-container {
+    position: fixed;
+    top: 100px; /* Posisi di bawah header */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    width: 90%;
+    max-width: 600px;
+}
+
+/* Animasi untuk flash messages */
+@keyframes slideDown {
+    0% {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Close button untuk flash messages */
+.alert .close-btn {
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: inherit;
+    opacity: 0.7;
+    transition: opacity 0.3s;
+}
+
+.alert .close-btn:hover {
+    opacity: 1;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .flash-container {
+        width: 95%;
+        top: 80px;
+    }
+}

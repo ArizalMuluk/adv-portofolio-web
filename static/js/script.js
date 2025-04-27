@@ -359,6 +359,38 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
+        // Cari semua tombol close pada flash messages
+        const closeButtons = document.querySelectorAll('.alert .close-btn');
+
+        // Tambahkan event listener untuk setiap tombol close
+        closeButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Dapatkan elemen alert parent
+                const alert = this.parentElement;
+                
+                // Animasi fade out
+                alert.style.opacity = '0';
+                
+                // Hapus elemen setelah animasi selesai
+                setTimeout(() => {
+                    alert.remove();
+                }, 300);
+            });
+        });
+        
+        // Otomatis hilangkan flash message setelah 5 detik
+        const flashMessages = document.querySelectorAll('.alert');
+        if (flashMessages.length > 0) {
+            setTimeout(() => {
+                flashMessages.forEach(message => {
+                    message.style.opacity = '0';
+                    setTimeout(() => {
+                        message.remove();
+                    }, 300);
+                });
+            }, 5000);
+        }
+
     // Form alert function
     function showFormAlert(message, type) {
         // Check if alert already exists and remove it
